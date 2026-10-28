@@ -2,3 +2,7 @@
 .claude/
 old/
 analisi-testo.html
+
+node_modules/
+dist/
+*.tsbuildinfo

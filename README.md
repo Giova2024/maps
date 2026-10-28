@@ -1,33 +1,52 @@
 # MiniMaps
 
-Un'app web gratuita, in un **singolo file HTML** (`index.html`), che funziona come Google Maps.
-Si usa aprendo `index.html` nel browser (serve una connessione internet per le mappe).
+App web gratuita di mappe in stile Google Maps, costruita con **React + TypeScript + Vite**.
 
 ## Funzionalità
-- 🔍 **Ricerca luoghi** con suggerimenti in tempo reale
+- 🔍 **Ricerca luoghi** con suggerimenti in tempo reale (navigabili anche da tastiera ↑ ↓ Invio)
 - 🗺️ **Viste**: Strade / Satellite / Scuro
 - 🧭 **Percorsi** (Da → A) con distanza e tempo stimato su strada reale
 - 📏 **Misuratore di distanza** (clic multipli, distanza totale live)
 - 🔎 **Ricerca POI** vicino al centro mappa (ristoranti, bar, benzinai, hotel, ospedali, supermercati, farmacie, scuole)
 - 📍 **Geolocalizzazione** e 🚶 **tracciamento GPS live**
 - ★ **Preferiti** salvati nel browser (`localStorage`) con export/import JSON
-- 🔗 **Condivisione link** con coordinate e zoom (deep link)
+- 🔗 **Condivisione link** con coordinate e zoom (deep link `?lat=..&lng=..&z=..`)
 - 🖨️ **Stampa mappa**
+- 📱 Layout adatto anche a smartphone
 
 ## Tecnologie
-- [Leaflet](https://leafletjs.com/) + tile **OpenStreetMap** / **Esri** (satellite) / **CARTO** (scuro)
-- **Nominatim** (geocoding), **OSRM** (routing), **Overpass API** (POI) — tutti servizi pubblici gratuiti, con rate-limit. Adatti all'uso personale, non a carichi elevati.
+- [React 19](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/) + [Vite](https://vite.dev/)
+- [react-leaflet](https://react-leaflet.js.org/) / [Leaflet](https://leafletjs.com/) con tile **OpenStreetMap** / **Esri** (satellite) / **CARTO** (scuro)
+- [Tailwind CSS 4](https://tailwindcss.com/) per lo stile, [zustand](https://zustand.docs.pmnd.rs/) per lo stato
+- **Nominatim** (geocoding), **OSRM** (routing), **Overpass API** (POI) — servizi pubblici gratuiti con rate-limit, adatti all'uso personale. Se il server Overpass principale è sovraccarico si passa automaticamente a un server alternativo.
+
+## Struttura
+```
+src/
+  App.tsx              layout e deep link
+  store.ts             stato globale (zustand): mappa, pannelli, marker, preferiti…
+  lib/api.ts           Nominatim, OSRM, Overpass
+  lib/storage.ts       localStorage con ripiego in memoria
+  components/
+    MapView.tsx        mappa, livelli, marker, percorso, misura, GPS
+    SearchBar.tsx      ricerca con suggerimenti
+    Panels.tsx         pannelli Percorso / Misura / POI / Preferiti
+    Controls.tsx       pulsanti laterali, cambio vista, box info, notifiche
+```
+
+## Sviluppo
+Serve [Node.js](https://nodejs.org/) 20 o superiore.
+```bash
+npm install
+npm run dev       # server di sviluppo su http://localhost:5173
+npm run build     # build di produzione in dist/
+npm run preview   # anteprima della build
+```
+
+> La build usa percorsi relativi: la cartella `dist/` funziona in qualunque sottocartella di un sito,
+> ma va servita da un server web (non si apre con doppio clic su `index.html`).
 
 ## Pubblicazione su GitHub Pages
-1. Crea un repository su https://github.com/new
-2. Dalla cartella del progetto:
-   ```bash
-   git remote add origin https://github.com/TUO-UTENTE/TUO-REPO.git
-   git branch -M main
-   git push -u origin main
-   ```
-3. Su GitHub: **Settings → Pages → Source: main / (root)** → Save.
-4. Il sito sarà disponibile su `https://TUO-UTENTE.github.io/TUO-REPO/`
-   (i link di condivisione funzioneranno ovunque).
-
-> Suggerimento: installa la GitHub CLI (`gh`) per gestire il repo da terminale.
+Il workflow `.github/workflows/deploy.yml` compila e pubblica automaticamente a ogni push su `main`.
+Basta, una sola volta, su GitHub: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+Il sito sarà su `https://giova2024.github.io/maps/`.
